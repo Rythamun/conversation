@@ -1,0 +1,24 @@
+<!-- <START> TextboxComponent-->
+<button (click)="exampleType='woProfile'">Textbox without Profile</button>
+<button (click)="exampleType='wProfile'">Textbox with Profile</button>
+
+<ryth-textbox *ngIf="exampleType==='woProfile'">
+  {{demoOutput}}
+</ryth-textbox>
+
+<ryth-textbox
+  [profile_img]="demoProfile"
+  [speaker]="demoName"
+  *ngIf="exampleType==='wProfile'">
+  {{demoOutput}}
+</ryth-textbox>
+<!-- <ENDE> TextboxComponent-->
+
+<br>
+<button (click)="exampleType='conversation1'">Conversation 1 Example</button>
+
+<ryth-conversation
+  [conversation]="conversation1"
+  (conversationEnded)="onConversationEnded()"
+  *ngIf="exampleType==='conversation1'">
+</ryth-conversation>
