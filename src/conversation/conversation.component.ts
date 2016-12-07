@@ -1,21 +1,21 @@
 import {Component, Input, OnInit, EventEmitter, Output} from '@angular/core';
 import {Conversation, ConversationStep, ConversationDecision} from './conversation';
-import {BackgroundStyle} from './background-style';
 
 @Component({
   selector: 'ryth-conversation',
   template: `
-<div *ngIf="conversationStep.decisions">
-  <ryth-action-selection
-    [decisions]="conversationStep.decisions" 
-    (decisionSelected)="onDecisionSelected($event)"
-    *ngIf="conversationStep.decisions.length > 0">
-  </ryth-action-selection>
-</div>
-  
-<div [ngStyle]="backgroundStyle" (click)="onClick()">
 
-  <img class="event-character" [src]="conversationStep.characterImgUrl">
+  <div *ngIf="conversationStep.decisions">
+    <ryth-action-selection
+      [decisions]="conversationStep.decisions" 
+      (decisionSelected)="onDecisionSelected($event)"
+      *ngIf="conversationStep.decisions.length > 0">
+    </ryth-action-selection>
+  </div>
+<div class="cover" (click)="onClick()">
+  <img [src]="conversationStep.backgroundImgUrl" class="cover no-selection" *ngIf="conversationStep.backgroundImgUrl"/>
+ 
+  <img draggable="false" class="event-character no-selection" [src]="conversationStep.characterImgUrl" *ngIf="conversationStep.characterImgUrl"/>
    
   <ryth-textbox
     [speaker]="conversationStep.speaker"
@@ -25,6 +25,30 @@ import {BackgroundStyle} from './background-style';
 
 </div>`,
   styles: [`
+
+div.cover {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -100;
+}
+
+img.cover {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+}
+
+img.no-selection {
+  -khtml-user-select: none;
+  -o-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
 
 @media (min-width: 992px) {
   img.event-character {
@@ -79,7 +103,6 @@ export class ConversationComponent implements OnInit {
 
     if (this.conversation) {
       this.conversationStep = this.conversation.conversationSteps[0];
-      this.backgroundStyle = new BackgroundStyle(this.conversationStep.backgroundImgUrl).getStyle();
     }
 
   }

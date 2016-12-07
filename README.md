@@ -32,3 +32,13 @@ export class AppModule {
 }
 ```
 
+```angular2html
+<ryth-conversation
+  [conversation]="conversationObject"
+  (conversationEnded)="onConversationEnded()"
+  *ngIf="conversationObject">
+</ryth-conversation>
+
+```
+
+Have a look at the demo for an example

@@ -4,61 +4,47 @@ import {ConversationDecision} from './conversation';
 @Component({
   selector: 'ryth-action-selection',
   template: `
-<div class="content">
-
-  <div class="action-selection">
-    <p class="mb-0">Actions:</p>
-
-    <div class="row">
-      <div class="col-xs-12">
-        <ul class="list-group event-action-group">
-          <div class="list-group-item event-list-group-item clearfix" (click)="onDecisionClicked(decision)" *ngFor="let decision of decisions">
-            <div class="pull-left">
-              <p class="list-group-item-heading action-header">{{decision.decisionText}}</p>
-              <p class="list-group-item-text text-muted action-effect-desc" *ngIf="decision.effectDesc">{{decision.effectDesc}}</p>
-            </div>
-          </div>
-        </ul>
-      </div>
-    </div>
+<div class="decision-group">
+  <div class="decision-item clearfix" (click)="onDecisionClicked(decision)" *ngFor="let decision of decisions">
+    {{decision.decisionText}}<span *ngIf="decision.effectDesc"> ({{decision.effectDesc}})</span>
   </div>
-
 </div>
 `,
   styles: [`
-div.action-selection {
-  font-size: 2vmax;
-  padding: 5px 5px 5px 5px;
-  color: white;
+@media (min-width: 992px) {
+  .decision-group {
+    overflow: auto;
+    margin: 10vh auto;
+    width: 50vw;
+  }
+}
+@media (max-width: 991px) {
+  .decision-group {
+    overflow: auto;
+    margin: 20px auto;
+    width: 90vw;
+  }
+}
+
+.decision-item {
   overflow: auto;
   border-radius: 10px;
-  border: 3px solid #263238;
+  border: 2px solid white;
   background-color: rgba(38, 50, 56, 0.8);
-}
-
-.event-action-group {
+  margin-bottom: 5px;
+  padding: 8px;
   color: white;
-  font-size: 1.5vmax;
+  text-align: center;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
-div.event-list-group-item {
-  overflow: auto;
-  border-radius: 10px;
-  border: 3px solid white;
-  background-color: rgba(38, 50, 56, 0);
-  padding: 1vmin;
-}
-div.event-list-group-item:hover {
+div.decision-item:hover {
   background-color: rgba(38, 50, 56, 1);
-}
-
-p.action-header {
-  font-size: 1.5vmax;
-  margin:0;
-}
-p.action-effect-desc {
-  font-size: 1vmax;
-  margin:0;
 }
 `]
 })

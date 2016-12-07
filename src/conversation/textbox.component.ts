@@ -30,6 +30,12 @@ div.textbox {
   border-radius: 10px;
   border: 3px solid #263238;
   background-color: rgba(38, 50, 56, 0.8);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 div.textbox-text {
@@ -81,7 +87,7 @@ div.textbox-speaker-name {
   ]
 })
 export class TextboxComponent implements OnInit {
-  
+
   @Input() speaker: string = null;
   @Input() profile_img: string = null;
 

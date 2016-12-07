@@ -24,7 +24,6 @@ export class ConversationDemoComponent {
     'conversationSteps': [
       {
         'id': '1',
-        'backgroundImgUrl': 'http://loremflickr.com/1280/720',
         'characterImgUrl': 'http://i.imgur.com/Cso7Heh.png',
         'speaker': 'Revolver Ocelot',
         'speakerProfilImgUrl': 'http://i.imgur.com/DtMY6O4.jpg',
@@ -33,7 +32,7 @@ export class ConversationDemoComponent {
       },
       {
         'id': '2',
-        'backgroundImgUrl': 'http://loremflickr.com/1280/720',
+        'backgroundImgUrl': 'http://i.imgur.com/nZ1nyhf.jpg',
         'characterImgUrl': 'http://i.imgur.com/Cso7Heh.png',
         'speaker': 'Revolver Ocelot',
         'speakerProfilImgUrl': 'http://i.imgur.com/DtMY6O4.jpg',
