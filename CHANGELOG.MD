@@ -1,3 +1,7 @@
+# 0.0.10
+### Change
+* **ConversationService** Basic Interface implemented
+
 # 0.0.8
 ### Change
 * **Character Image** Prevent image from dragging (doesn't work with every browser)

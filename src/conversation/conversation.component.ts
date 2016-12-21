@@ -1,5 +1,6 @@
-import {Component, Input, OnInit, EventEmitter, Output} from '@angular/core';
-import {Conversation, ConversationStep, ConversationDecision} from './conversation';
+import {Component, Input, OnInit, EventEmitter, Output, Inject, Optional} from '@angular/core';
+import {Conversation, ConversationStep, ConversationDecision, MediaRequestModel} from './conversation';
+import {IConversationService} from './conversation-service.interface';
 
 @Component({
   selector: 'ryth-conversation',
@@ -13,13 +14,13 @@ import {Conversation, ConversationStep, ConversationDecision} from './conversati
     </ryth-action-selection>
   </div>
 <div class="cover" (click)="onClick()">
-  <img [src]="conversationStep.backgroundImgUrl" class="cover no-selection" *ngIf="conversationStep.backgroundImgUrl"/>
+  <img [src]="backgroundImageUrl" class="cover no-selection" *ngIf="backgroundImageUrl"/>
  
-  <img draggable="false" class="event-character no-selection" [src]="conversationStep.characterImgUrl" *ngIf="conversationStep.characterImgUrl"/>
+  <img draggable="false" class="event-character no-selection" [src]="characterImageUrl" *ngIf="characterImageUrl"/>
    
   <ryth-textbox
     [speaker]="conversationStep.speaker"
-    [profile_img]="conversationStep.speakerProfilImgUrl">
+    [profile_img]="profileImageUrl">
         {{conversationStep.text}}
   </ryth-textbox>
 
@@ -96,13 +97,23 @@ export class ConversationComponent implements OnInit {
   @Input() conversation: Conversation = null;
   @Output() conversationEnded = new EventEmitter();
 
-  backgroundStyle: any = null;
   conversationStep: ConversationStep = null;
+  conversationService: IConversationService = null;
+  characterImageUrl: string = null;
+  profileImageUrl: string = null;
+  backgroundImageUrl: string = null;
+
+  constructor(@Optional() @Inject('GameStateService') conversationService: IConversationService) {
+    if (conversationService) {
+      this.conversationService = conversationService;
+    }
+  }
 
   ngOnInit() {
 
     if (this.conversation) {
       this.conversationStep = this.conversation.conversationSteps[0];
+      this.resolveMedia()
     }
 
   }
@@ -122,6 +133,33 @@ export class ConversationComponent implements OnInit {
 
   getNextStep(id: string) {
     this.conversationStep = this.conversation.conversationSteps.filter(item => item.id === id)[0];
+    this.resolveMedia()
+  }
+
+  resolveMedia() {
+    if (this.conversationStep.characterImage) {
+      this.getMediaUrl(this.conversationStep.characterImage).then(
+        url => this.characterImageUrl = url
+      );
+    } else {
+      this.characterImageUrl = null;
+    }
+
+    if (this.conversationStep.profileImage) {
+      this.getMediaUrl(this.conversationStep.profileImage).then(
+        url => this.profileImageUrl = url
+      );
+    } else {
+      this.profileImageUrl = null;
+    }
+
+    if (this.conversationStep.backgroundImage) {
+      this.getMediaUrl(this.conversationStep.backgroundImage).then(
+        url => this.backgroundImageUrl = url
+      );
+    } else {
+      this.backgroundImageUrl = null;
+    }
   }
 
   onDecisionSelected(decision: ConversationDecision) {
@@ -136,6 +174,33 @@ export class ConversationComponent implements OnInit {
   private isEventFinished() {
     if (!this.conversationStep.nextStep && !this.conversationStep.decisions) {
       this.conversationEnded.emit();
+    }
+  }
+
+  private getMediaUrl(mediaRequest: MediaRequestModel): Promise<string> {
+    if (mediaRequest) {
+      if (this.conversationService) {
+        return new Promise((resolve, reject)  => {
+          let response = this.conversationService.getMediaUrl(mediaRequest);
+
+          if (response) {
+            resolve(response);
+          } else {
+            reject(null)
+          }
+        });
+      } else {
+        return new Promise((resolve, reject) => {
+          if (mediaRequest.resource) {
+            resolve(mediaRequest.resource);
+          } else {
+            reject(null)
+          }
+
+        });
+      }
+    } else {
+      return null;
     }
   }
 

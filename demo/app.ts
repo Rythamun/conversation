@@ -7,6 +7,7 @@ import { NgModule, Component, enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { BrowserModule } from '@angular/platform-browser';
 import { ConversationModule } from './../src/index';
+import {GameStateService} from './MockGameState.service';
 
 @Component({
   selector: 'conversation-demo-app',
@@ -24,18 +25,18 @@ export class ConversationDemoComponent {
     'conversationSteps': [
       {
         'id': '1',
-        'characterImgUrl': 'http://i.imgur.com/Cso7Heh.png',
+        'characterImage': { 'type': 'Url', 'resource': 'http://i.imgur.com/Cso7Heh.png' },
         'speaker': 'Revolver Ocelot',
-        'speakerProfilImgUrl': 'http://i.imgur.com/DtMY6O4.jpg',
+        'profileImage': { 'type': 'Url', 'resource': 'http://i.imgur.com/DtMY6O4.jpg' },
         'text': 'This is a test',
         'nextStep': '2'
       },
       {
         'id': '2',
-        'backgroundImgUrl': 'http://i.imgur.com/nZ1nyhf.jpg',
-        'characterImgUrl': 'http://i.imgur.com/Cso7Heh.png',
+        'backgroundImage': { 'type': 'Url', 'resource': 'http://i.imgur.com/nZ1nyhf.jpg' },
+        'characterImage': { 'type': 'Url', 'resource': 'http://i.imgur.com/Cso7Heh.png' },
         'speaker': 'Revolver Ocelot',
-        'speakerProfilImgUrl': 'http://i.imgur.com/DtMY6O4.jpg',
+        'profileImage': { 'type': 'Url', 'resource': 'http://i.imgur.com/DtMY6O4.jpg' },
         'text': 'Yo - test ok',
         'decisions': [
           {
@@ -55,10 +56,10 @@ export class ConversationDemoComponent {
       },
       {
         'id': '3',
-        'backgroundImgUrl': 'http://loremflickr.com/1280/720',
-        'characterImgUrl': 'http://i.imgur.com/Cso7Heh.png',
+        'backgroundImage': { 'type': 'Url', 'resource': 'http://i.imgur.com/nZ1nyhf.jpg' },
+        'characterImage': { 'type': 'Url', 'resource': 'http://i.imgur.com/Cso7Heh.png' },
         'speaker': 'Revolver Ocelot',
-        'speakerProfilImgUrl': 'http://i.imgur.com/DtMY6O4.jpg',
+        'profileImage': { 'type': 'Url', 'resource': 'http://i.imgur.com/DtMY6O4.jpg' },
         'text': 'The End',
         'nextStep': null
       }
@@ -80,7 +81,7 @@ export class ConversationDemoComponent {
   declarations: [
     ConversationDemoComponent
   ],
-  providers: [],
+  providers: [GameStateService, { provide: 'GameStateService', useExisting: GameStateService }],
   imports: [
     BrowserModule,
     ConversationModule.forRoot()

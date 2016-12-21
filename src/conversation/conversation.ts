@@ -12,10 +12,10 @@ export class Conversation {
 export class ConversationStep {
 
   id: string;
-  backgroundImgUrl: string;
-  characterImgUrl: string;
+  backgroundImage: MediaRequestModel;
   speaker: string;
-  speakerProfilImgUrl: string;
+  characterImage: MediaRequestModel;
+  profileImage: MediaRequestModel;
   text: string;
   decisions: Array<ConversationDecision>;
   nextStep: string;
@@ -27,3 +27,11 @@ export class ConversationDecision {
   effectDesc: string;
   nextStep: string;
 }
+
+export class MediaRequestModel {
+  type: string;
+  resource: string;
+  plugin: string;
+  id: string;
+}
+
