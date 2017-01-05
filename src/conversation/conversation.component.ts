@@ -1,6 +1,7 @@
-import {Component, Input, OnInit, EventEmitter, Output, Inject, Optional} from '@angular/core';
+import {Component, Input, OnInit, EventEmitter, Output, Inject, Optional, HostListener} from '@angular/core';
 import {Conversation, ConversationStep, ConversationDecision, MediaRequestModel} from './conversation';
 import {IConversationService} from './conversation-service.interface';
+import {tryCatch} from 'rxjs/util/tryCatch';
 
 @Component({
   selector: 'ryth-conversation',
@@ -13,7 +14,7 @@ import {IConversationService} from './conversation-service.interface';
       *ngIf="conversationStep.decisions.length > 0">
     </ryth-action-selection>
   </div>
-<div class="cover" (click)="onClick()">
+<div class="cover" (click)="onClick()" >
   <img [src]="backgroundImageUrl" class="cover no-selection" *ngIf="backgroundImageUrl"/>
  
   <img draggable="false" class="event-character no-selection" [src]="characterImageUrl" *ngIf="characterImageUrl"/>
@@ -113,9 +114,32 @@ export class ConversationComponent implements OnInit {
 
     if (this.conversation) {
       this.conversationStep = this.conversation.conversationSteps[0];
+      this.replacePlaceholder();
       this.resolveMedia()
     }
 
+  }
+
+  replacePlaceholder() {
+    if (this.conversationService && this.conversationStep) {
+      this.conversationStep.text = this.replacer(this.conversationStep.text, this.conversationService.currentGameState);
+      this.conversationStep.speaker = this.replacer(this.conversationStep.speaker, this.conversationService.currentGameState);
+
+      if (this.conversationStep.decisions && this.conversationStep.decisions.length > 0) {
+        this.conversationStep.decisions.forEach(
+          (decision, index) => {
+            this.conversationStep.decisions[index].decisionText = this.replacer(decision.decisionText, this.conversationService.currentGameState);
+            this.conversationStep.decisions[index].effectDesc = this.replacer(decision.effectDesc, this.conversationService.currentGameState);
+          });
+      }
+    }
+  }
+
+  @HostListener('document:keypress', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === ' ' || event.key === 'Spacebar') {
+      this.onClick();
+    }
   }
 
   onClick() {
@@ -133,6 +157,7 @@ export class ConversationComponent implements OnInit {
 
   getNextStep(id: string) {
     this.conversationStep = this.conversation.conversationSteps.filter(item => item.id === id)[0];
+    this.replacePlaceholder();
     this.resolveMedia()
   }
 
@@ -180,7 +205,7 @@ export class ConversationComponent implements OnInit {
   private getMediaUrl(mediaRequest: MediaRequestModel): Promise<string> {
     if (mediaRequest) {
       if (this.conversationService) {
-        return new Promise((resolve, reject)  => {
+        return new Promise((resolve, reject) => {
           let response = this.conversationService.getMediaUrl(mediaRequest);
 
           if (response) {
@@ -194,13 +219,26 @@ export class ConversationComponent implements OnInit {
           if (mediaRequest.resource) {
             resolve(mediaRequest.resource);
           } else {
-            reject(null)
+            reject(null);
           }
 
         });
       }
     } else {
       return null;
+    }
+  }
+
+  private replacer(template, obj) {
+    try {
+      let keys = Object.keys(obj);
+      let func = Function(...keys, 'return `' + template + '`;');
+
+      return func(...keys.map(k => obj[k]));
+    }
+    catch (e) {
+      console.log(e);
+      return template;
     }
   }
 

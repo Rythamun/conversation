@@ -9,4 +9,7 @@ export class GameStateService {
   getMediaUrl(mediaRequestModel: any) {
     return mediaRequestModel.resource;
   }
+
+  currentGameState: any = { playerName: 'test' };
+
 }

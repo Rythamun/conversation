@@ -1,3 +1,9 @@
+# 0.0.16
+### Change
+* **ConversationService** MediaRequest implemented
+* **ConversationService** Variable replacer implemented
+* **Usability** Spacebar for next step added
+
 # 0.0.10
 ### Change
 * **ConversationService** Basic Interface implemented

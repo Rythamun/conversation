@@ -28,7 +28,15 @@ export class ConversationDemoComponent {
         'characterImage': { 'type': 'Url', 'resource': 'http://i.imgur.com/Cso7Heh.png' },
         'speaker': 'Revolver Ocelot',
         'profileImage': { 'type': 'Url', 'resource': 'http://i.imgur.com/DtMY6O4.jpg' },
-        'text': 'This is a test',
+        'text': 'This is a test - fix',
+        'nextStep': '1a'
+      },
+      {
+        'id': '1a',
+        'characterImage': { 'type': 'Url', 'resource': 'http://i.imgur.com/Cso7Heh.png' },
+        'speaker': '${playerName}',
+        'profileImage': { 'type': 'Url', 'resource': 'http://i.imgur.com/DtMY6O4.jpg' },
+        'text': 'This is a ${playerName} - dynamic',
         'nextStep': '2'
       },
       {
@@ -41,14 +49,14 @@ export class ConversationDemoComponent {
         'decisions': [
           {
             'id': '1',
-            'decisionText': 'DoSomething',
+            'decisionText': 'DoSomething ${playerName}',
             'effectDesc': 'Back to step 1',
             'nextStep': '1'
           },
           {
             'id': '2',
             'decisionText': 'DoSomething',
-            'effectDesc': 'Go to step 3',
+            'effectDesc': 'Go to step 3 ${playerName}',
             'nextStep': '3'
           }
         ],
