@@ -1,3 +1,11 @@
+# 0.1.5
+### Change
+* **ConversationService** rule Engine added
+* **Conversation** nextStepByRule added
+* **Conversation Decisions** nextStepByRule in decisions added
+* **Conversation Decisions** visibleRule added
+* **Conversation Decisions** effectRule added
+
 # 0.0.16
 ### Change
 * **ConversationService** MediaRequest implemented

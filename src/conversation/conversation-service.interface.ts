@@ -3,4 +3,6 @@ export interface IConversationService{
   currentGameState: any;
 }
 
-
+export interface IRuleEngineService{
+  executeRuleEngine(rule: any): any;
+}

@@ -1,6 +1,6 @@
 import {Component, Input, OnInit, EventEmitter, Output, Inject, Optional, HostListener} from '@angular/core';
 import {Conversation, ConversationStep, ConversationDecision, MediaRequestModel} from './conversation';
-import {IConversationService} from './conversation-service.interface';
+import {IConversationService, IRuleEngineService} from './conversation-service.interface';
 import {tryCatch} from 'rxjs/util/tryCatch';
 
 @Component({
@@ -100,13 +100,18 @@ export class ConversationComponent implements OnInit {
 
   conversationStep: ConversationStep = null;
   conversationService: IConversationService = null;
+  ruleEngineService: IRuleEngineService = null;
   characterImageUrl: string = null;
   profileImageUrl: string = null;
   backgroundImageUrl: string = null;
 
-  constructor(@Optional() @Inject('GameStateService') conversationService: IConversationService) {
+  constructor(@Optional() @Inject('GameStateService') conversationService: IConversationService,
+              @Optional() @Inject('RuleEngineService') ruleEngineService: IRuleEngineService) {
     if (conversationService) {
       this.conversationService = conversationService;
+    }
+    if (ruleEngineService) {
+      this.ruleEngineService = ruleEngineService;
     }
   }
 
@@ -115,9 +120,31 @@ export class ConversationComponent implements OnInit {
     if (this.conversation) {
       this.conversationStep = this.conversation.conversationSteps[0];
       this.replacePlaceholder();
+      this.checkDecisionVisibleRule();
       this.resolveMedia()
     }
 
+  }
+
+  checkDecisionVisibleRule() {
+    if (this.conversationService && this.conversationStep) {
+      if (this.conversationStep.decisions && this.conversationStep.decisions.length > 0) {
+        this.conversationStep.decisions.forEach(
+          (decision, index) => {
+            if (decision.visibleRule) {
+
+              let resultSet = this.ruleEngineService.executeRuleEngine(decision.visibleRule);
+              if (resultSet.result) {
+                this.conversationStep.decisions[index].visible = true;
+              } else {
+                this.conversationStep.decisions[index].visible = false;
+              }
+            } else {
+              this.conversationStep.decisions[index].visible = true;
+            }
+          });
+      }
+    }
   }
 
   replacePlaceholder() {
@@ -147,12 +174,20 @@ export class ConversationComponent implements OnInit {
 
       if (this.conversationStep.nextStep) {
         this.getNextStep(this.conversationStep.nextStep);
-      }
-      else {
+      } else if (this.conversationStep.nextStepRule) {
+        this.getNextStepByRule(this.conversationStep.nextStepRule);
+      } else {
         this.isEventFinished();
       }
 
     }
+  }
+
+  getNextStepByRule(rule: any) {
+    let resultSet = this.ruleEngineService.executeRuleEngine(rule);
+    this.conversationStep = this.conversation.conversationSteps.filter(item => item.id === resultSet.result)[0];
+    this.replacePlaceholder();
+    this.resolveMedia()
   }
 
   getNextStep(id: string) {
@@ -188,16 +223,23 @@ export class ConversationComponent implements OnInit {
   }
 
   onDecisionSelected(decision: ConversationDecision) {
+    // Execute conditionRule after selection
+    if (decision.effectRule) {
+      this.ruleEngineService.executeRuleEngine(decision.effectRule);
+    }
+
+    // next Step or finish Event
     if (decision.nextStep) {
       this.getNextStep(decision.nextStep);
-    }
-    else {
+    } else if (decision.nextStepRule) {
+      this.getNextStepByRule(decision.nextStepRule);
+    } else {
       this.isEventFinished();
     }
   }
 
   private isEventFinished() {
-    if (!this.conversationStep.nextStep && !this.conversationStep.decisions) {
+    if (!this.conversationStep.nextStep && !this.conversationStep.nextStepRule && !this.conversationStep.decisions) {
       this.conversationEnded.emit();
     }
   }

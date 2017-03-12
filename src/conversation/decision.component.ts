@@ -6,7 +6,7 @@ import {ConversationDecision} from './conversation';
   template: `
 <div class="decision-group">
   <div class="decision-item clearfix" (click)="onDecisionClicked(decision)" *ngFor="let decision of decisions">
-    {{decision.decisionText}}<span *ngIf="decision.effectDesc"> ({{decision.effectDesc}})</span>
+    {{decision.decisionText}}<span *ngIf="decision.effectDesc && decision.effectDesc !== 'undefined'"> ({{decision.effectDesc}})</span>
   </div>
 </div>
 `,

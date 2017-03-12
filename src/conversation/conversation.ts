@@ -19,13 +19,18 @@ export class ConversationStep {
   text: string;
   decisions: Array<ConversationDecision>;
   nextStep: string;
+  nextStepRule: any;
 }
 
 export class ConversationDecision {
   id: string;
+  visibleRule: any;
+  visible: boolean;
   decisionText: string;
   effectDesc: string;
+  effectRule: any;
   nextStep: string;
+  nextStepRule: any;
 }
 
 export class MediaRequestModel {
